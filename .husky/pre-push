@@ -1,0 +1,33 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+if [ -t 1 ]; then
+  RED='\033[0;31m'
+  GREEN='\033[0;32m'
+  BLUE='\033[0;34m'
+  NC='\033[0m' # No Color
+else
+  RED=''
+  GREEN=''
+  BLUE=''
+  NC=''
+fi
+
+log() {
+  printf "%b%s%b\n" "$1" "$2" "$NC"
+}
+
+log "$BLUE" "⏳ Running check-types..."
+if ! pnpm run check-types; then
+  log "$RED" "❌ Type check failed! Please fix errors before committing."
+  exit 1
+fi
+
+log "$BLUE" "🔍 Running lint..."
+if ! pnpm run lint; then
+  log "$RED" "❌ Lint errors found! Please fix them before committing."
+  exit 1
+fi
+
+log "$GREEN" "✅ Pre-push checks passed successfully!"
+log "$GREEN" "🎉 You're ready to make next commits!"
