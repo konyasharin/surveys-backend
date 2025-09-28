@@ -7,8 +7,32 @@ datasource db {
   url      = env("APP_DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+model Survey {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String?
+  questions   Question[]
+}
+
+model Question {
+  id       Int          @id @default(autoincrement())
+  text     String
+  type     QuestionType @default(SINGLE)
+  answers  Answer[]
+  survey   Survey?      @relation(fields: [surveyId], references: [id])
+  surveyId Int
+}
+
+model Answer {
+  id         Int       @id @default(autoincrement())
+  text       String
+  isTrue     Boolean
+  question   Question? @relation(fields: [questionId], references: [id])
+  questionId Int
+}
+
+enum QuestionType {
+  SINGLE
+  MULTIPLE
+  TEXT
 }
